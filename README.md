@@ -2,9 +2,6 @@
 
 This project implements a PDF chatbot powered by **Retrieval Augmented Generation (RAG)**. It allows users to upload any PDF document, analyze its contents, and answer the questions related to the uploaded file. The chatbot responds based on the PDF's content and can refuse to reply if the requested information is not present in the document.
 
-<img width="1116" alt="app" src="https://github.com/user-attachments/assets/81cab820-73bb-4d86-95e2-02884bdabd8d">
-
-
 
 ## Key Features
 - **PDF Upload & Analysis**: Upload any PDF file and have it automatically analyzed for content extraction.
@@ -31,9 +28,6 @@ This file handles the UI components for the project, built with two primary sect
 - **Right Panel**:
   - *Chat Area*: Displays the chat history between the user and the chatbot.
   - *User Input Area*: A textbox for the user to input questions with a send button to submit the queries.
- 
-<img width="814" alt="gui" src="https://github.com/user-attachments/assets/396a7d51-9028-4191-8b15-6adc23af6c7f">
-
 
 ### 2. `ragModel.py` - The Core Logic
 This file handles the following:
@@ -46,12 +40,6 @@ This file handles the following:
 This file handles grammar and spelling correction of user inputs:
 - **User Input Correction**: It checks for spelling and grammar errors in the user's query and replaces the corrected version in the chat area.
 - **Punctuation Handling**: Note that this project version does not handle punctuation.
-<table>
-  <tr>
-    <td><img width="503" alt="gchck1" src="https://github.com/user-attachments/assets/f0f6b292-cc5b-489e-99b9-09613dbc055d"></td>
-    <td><img width="499" alt="gchck2" src="https://github.com/user-attachments/assets/d49942ec-19eb-4a4e-a68e-824a8dea3e34"></td>
-  </tr>
-</table>
 
 ## How to Run the Project
 
