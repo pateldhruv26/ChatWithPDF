@@ -20,14 +20,11 @@ This project implements a PDF chatbot powered by **Retrieval Augmented Generatio
 
 ## Project Structure
 
-### 1. `app.py` - The User Interface
-This file handles the UI components for the project, built with two primary sections:
-- **Left Panel**: 
-  - *Upload Button*: Allows the user to upload a PDF file.
-  - *Analyze Button*: Analyzes the uploaded PDF and prepares it for question answering.
-- **Right Panel**:
-  - *Chat Area*: Displays the chat history between the user and the chatbot.
-  - *User Input Area*: A textbox for the user to input questions with a send button to submit the queries.
+### 1. `pdf_chatbot.py` – Terminal-Based Interface
+- This script provides a simple command-line interface for interacting with a PDF chatbot using RAG architecture:
+- PDF Loading: Prompts the user to enter the file path of the PDF to analyze.
+- Semantic Search Setup: Processes and embeds the document content for semantic retrieval using FAISS.
+- **Chat Loop**: Accepts natural language questions from the user and returns context-aware answers based on the PDF content.
 
 ### 2. `ragModel.py` - The Core Logic
 This file handles the following:
@@ -56,7 +53,7 @@ This file handles grammar and spelling correction of user inputs:
 3. **Run the Application**:
    Navigate to the project directory and run:
    ```bash
-   python app.py
+   python pdf_chatbot.py
    ```
 
 ## Conclusion
