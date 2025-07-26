@@ -1,58 +1,45 @@
 from PyPDF2 import PdfReader
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings,ChatOpenAI
-from langchain_community.vectorstores import FAISS
-from langchain.memory import ConversationBufferMemory
-from langchain.chains import ConversationalRetrievalChain
+from sentence_transformers import SentenceTransformer
+import faiss
+import numpy as np
+from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 
-api_key = "YOUR_API_KEY"
+embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+
+qa_pipeline = pipeline("text-generation", model="mistralai/Mistral-7B-Instruct-v0.1", tokenizer="mistralai/Mistral-7B-Instruct-v0.1", device=0)
 
 def get_pdf_content(documents):
     raw_text = ""
-
     for document in documents:
         pdf_reader = PdfReader(document)
         for page in pdf_reader.pages:
-            raw_text += page.extract_text()
-
+            raw_text += page.extract_text() or ""
     return raw_text
 
-def get_chunks(text):
-    text_splitter = CharacterTextSplitter(
-        separator="\n",
-        chunk_size=1000,
-        chunk_overlap=200,
-        length_function=len
-    )
-    text_chunks = text_splitter.split_text(text)
-    return text_chunks
+def get_chunks(text, chunk_size=1000, overlap=200):
+    chunks = []
+    for i in range(0, len(text), chunk_size - overlap):
+        chunks.append(text[i:i+chunk_size])
+    return chunks
 
 def get_embeddings(chunks):
-    embeddings = OpenAIEmbeddings(openai_api_key=api_key)
-    vector_storage = FAISS.from_texts(texts=chunks, embedding=embeddings)
-    return vector_storage
+    embeddings = embedding_model.encode(chunks)
+    dim = embeddings.shape[1]
+    index = faiss.IndexFlatL2(dim)
+    index.add(np.array(embeddings))
+    return index, embeddings, chunks
 
-def start_conversation(vector_embeddings):
-    llm = ChatOpenAI(openai_api_key=api_key)
-    memory = ConversationBufferMemory(
-        memory_key='chat_history',
-        return_messages=True
-    )
-    conversation = ConversationalRetrievalChain.from_llm(
-        llm=llm,
-        retriever=vector_embeddings.as_retriever(),
-        memory=memory
-    )
-    return conversation
+def get_conversation(text):
+    chunks = get_chunks(text)
+    index, embeddings, chunk_texts = get_embeddings(chunks)
+    return {"index": index, "embeddings": embeddings, "chunks": chunk_texts}
 
-def get_conversation(pdf_text):
-    chunks = get_chunks(pdf_text)
-    vector_storage = get_embeddings(chunks)
-    conversation = start_conversation(vector_storage)
+def get_response(conversation, question, top_k=3):
+    question_vector = embedding_model.encode([question])
+    distances, indices = conversation["index"].search(np.array(question_vector), top_k)
+    context = "\n".join([conversation["chunks"][idx] for idx in indices[0]])
 
-    return conversation
-
-def get_response(conversation,question):
-    response = conversation.invoke(question)['answer']
-    if response:
-        return response
+    prompt = f"Answer the question based on the context:\n\nContext:\n{context}\n\nQuestion: {question}\nAnswer:"
+    response = qa_pipeline(prompt, max_new_tokens=200, do_sample=True)[0]['generated_text']
+    
+    return response.split("Answer:")[-1].strip()
