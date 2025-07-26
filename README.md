@@ -47,7 +47,7 @@ This file handles grammar and spelling correction of user inputs:
 
 2. **Clone the Repository**:
    ```bash
-   git clone https://github.com/dheerajkallakuri/pdfChatbot.git
+   git clone https://github.com/pateldhruv26/ChatWithPDF
    ```
 
 3. **Run the Application**:
