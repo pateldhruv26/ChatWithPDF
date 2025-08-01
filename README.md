@@ -33,11 +33,6 @@ This file handles the following:
 - **Query Processing**: When the user asks a question, it is embedded, and relevant chunks are retrieved from the vector store.
 - **LLM Integration**: The retrieved information is passed to the language model for generating responses.
 
-### 3. `grammarCheck.py` - Grammar and Spelling Check
-This file handles grammar and spelling correction of user inputs:
-- **User Input Correction**: It checks for spelling and grammar errors in the user's query and replaces the corrected version in the chat area.
-- **Punctuation Handling**: Note that this project version does not handle punctuation.
-
 ## How to Run the Project
 
 1. **Install Requirements**: Install all required libraries using the `requirements.txt` file by running:
